@@ -1,0 +1,98 @@
+﻿@page "/clubs"
+
+<PageTitle>Clubs</PageTitle>
+
+
+<h1 class="my-4 px-1">Clubs by Status</h1>
+
+<MudPaper Class="d-flex" Elevation="0" Style="background-color: transparent;">
+	<MudRadioGroup @bind-Value="activeStatus">
+		<MudRadio Value="true" Color="Color.Primary">Active</MudRadio>
+		<MudRadio Value="false" Color="Color.Secondary">Inactive</MudRadio>
+	</MudRadioGroup>
+
+	<MudItem xs="12" sm="6">
+		<MudPaper Class="d-flex flex-wrap justify-content-center" Elevation="0" Style="background-color: transparent;">
+			<MudButton 
+					Class="mx-2 my-1 rounded-pill" 
+					Variant="Variant.Filled" 
+					EndIcon="@Icons.Material.Filled.Search" 
+					OnClick="DisplayClubs" 
+					Style="background-color:#134074; color:white">
+					Display Clubs
+			</MudButton>
+
+			<MudButton 
+					Class="mx-2 my-1 rounded-pill" 
+					Variant="Variant.Filled" 
+					EndIcon="@Icons.Material.Filled.Add" 
+					Href="/club" 
+					Style="background-color:#981898; color:white">
+					Create a Club
+			</MudButton>
+		</MudPaper>
+	</MudItem>
+</MudPaper>
+
+@if (errorMessages.Count > 0)
+{
+	<MudPaper Elevation="0">
+		<MudText Typo="Typo.h6">Oops! Something Went Wrong!</MudText>
+		@foreach (string error in errorMessages)
+		{
+			<MudText Color="Color.Error" Typo="Typo.body2">@error</MudText>
+		}
+	</MudPaper>
+}
+
+@if(loading)
+{
+	<div class="mt-5">
+		<MudSkeleton Width="100%" Animation="Animation.Wave" Height="60px" />
+		<MudSkeleton Width="100%" Animation="Animation.Wave" Height="60px" />
+		<MudSkeleton Width="100%" Animation="Animation.Wave" Height="60px" />
+		<MudSkeleton Width="100%" Animation="Animation.Wave" Height="60px" />
+		<MudSkeleton Width="100%" Animation="Animation.Wave" Height="60px" />
+	</div>
+}
+
+@if (clubs.Count > 0)
+{
+	<MudTable Items="clubs" Class="mt-5" Height="587px" Hover="true" Style="box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 50px;">
+		<HeaderContent>
+			<MudTh><MudTableSortLabel SortBy="new Func<Club, object>(x=>x.ClubID)">ID</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<Club, object>(x=>x.ClubName)">Name</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<Club, object>(x=>x.Employee.FullName)">Staff</MudTableSortLabel></MudTh>
+			<MudTh><MudTableSortLabel SortBy="new Func<Club, object>(x=>x.Fee)">Fee</MudTableSortLabel></MudTh>
+			<MudTh />
+		</HeaderContent>
+
+		<RowTemplate>
+			<MudTd DataLabel="ID">@context.ClubID</MudTd>
+			<MudTd DataLabel="Name">@context.ClubName</MudTd>
+			<MudTd DataLabel="Staff">
+				@if (context.Employee != null)
+				{
+					@context.Employee.FullName;
+				}
+				else
+				{
+					<p>No Staff Member</p>
+				}
+			</MudTd>
+			<MudTd DataLabel="Fee">@context.Fee.ToString("C")</MudTd>
+			<MudTd DataLabel="Edit">
+				<span 
+					Class="cursor-pointer" 
+					@onclick="@(() => EditClub(@context.ClubID))" 
+					Style="text-decoration: underline; color: blue;">
+					edit
+				</span>
+			</MudTd>
+		</RowTemplate>
+
+		<PagerContent>
+			<MudTablePager HideRowsPerPage="true" PageSizeOptions="new int[] {10}" />
+		</PagerContent>
+	</MudTable>
+}

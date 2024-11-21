@@ -1,0 +1,107 @@
+﻿@page "/club/{clubId?}"
+
+<PageTitle>Club Edit</PageTitle>
+
+@if (errorMessages.Count > 0)
+{
+	<MudPaper Class="mt-2" Elevation="0" Style="background-color: transparent">
+		<MudText Typo="Typo.h6">An Error has Occured:</MudText>
+		@foreach (var error in errorMessages)
+		{
+			<MudText Color="Color.Error" Typo="Typo.body2">@error</MudText>
+		}
+	</MudPaper>
+}
+
+<MudForm Class="mt-8" @ref="clubForm">
+	<MudGrid Class="d-flex justify-center" >
+		<MudItem xs="12" sm="6">
+			<MudCard Style="box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 50px;">
+				<MudCardHeader Class="d-flex justify-center">
+					<MudText Typo="Typo.h4">@(newClub ? "New Club Form" : "Edit Club")</MudText>
+				</MudCardHeader>
+				<MudCardContent>
+					@if (newClub)
+					{
+						<MudText Typo="Typo.subtitle2" Class="d-flex justify-center">*New Clubs are Inactive by default.</MudText>
+						<MudText Typo="Typo.subtitle2" Class="d-flex justify-center">Once submitted their status can be changed.</MudText>
+					}
+
+					<MudTextField 
+							Variant="Variant.Text" 
+							T="string" 
+							Label="Club ID" 
+							ReadOnly="@(!newClub)" 
+							@bind-Value="SelectedClub.ClubID" 
+							Required 
+							RequiredError="Club ID must be provided." 
+							Immediate="true" />
+
+					<MudTextField 
+							Variant="Variant.Text" 
+							T="string" 
+							Label="Club Name" 
+							@bind-Value="SelectedClub.ClubName" 
+							Required 
+							RequiredError="Club Name must be provided." 
+							Immediate="true" />
+
+					<MudSelect 
+							Variant="Variant.Text" 
+							T="Employee" 
+							Label="Staff" 
+							Clearable 
+							Required="@newClub" 
+							RequiredError="A Staff Member is required for a New Club."
+							@bind-Value="SelectedClub.Employee" 
+							Immediate="true">
+						@foreach (Employee employee in availableStaff)
+						{
+							<MudSelectItem Value="employee">@employee.FullName</MudSelectItem>
+						}
+					</MudSelect>
+
+					<MudNumericField 
+							Variant="Variant.Text" 
+							Format="C" 
+							T="decimal" 
+							Label="Fee" 
+							@bind-Value="SelectedClub.Fee" 
+							Min="0" 
+							Immediate="true" />
+
+					<MudItem Class="mt-4" xs="12">
+						<MudPaper Class="d-flex flex-wrap" Elevation="0">
+							<MudButton 
+									Class="mx-2 my-1" 
+									Variant="Variant.Filled" 
+									EndIcon="@Icons.Material.Filled.Send" 
+									Color="Color.Primary" 
+									OnClick="@(newClub ? AddClub : UpdateClub)">
+									@(newClub ? "Submit" : "Save Changes")
+							</MudButton>
+
+							<MudButton 
+									Class="mx-2 my-1" 
+									Variant="Variant.Filled" 
+									EndIcon="@Icons.Material.Filled.Delete" 
+									OnClick="Clear" Color="Color.Secondary">Clear
+							</MudButton>
+
+							<MudSpacer />
+
+							<MudCheckBox 
+									T="bool"
+									Color="Color.Tertiary"
+									ReadOnly="@newClub"
+									Label="This Club is Active"
+									Value = "SelectedClub.Active"
+									onclick="@(SelectedClub.Active == false ? ActivateClub : DeactivateClub)"
+									LabelPosition="LabelPosition.Start" />
+						</MudPaper>
+					</MudItem>
+				</MudCardContent>
+			</MudCard>
+		</MudItem>
+	</MudGrid>
+</MudForm>
