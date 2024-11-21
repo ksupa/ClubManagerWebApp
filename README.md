@@ -1,4 +1,4 @@
-# CLub Manager Web App
+# Club Manager Web App
 
 This project provides a system for managing clubs and their associated employees within an organization. 
 
